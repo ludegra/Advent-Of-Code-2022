@@ -1,4 +1,4 @@
-use std::{collections::HashSet, time::Instant};
+use std::{collections::HashSet, time::{Instant, Duration}, thread::sleep};
 
 use itertools::Itertools;
 const DAY_NUMBER: u32 = 9;
@@ -84,48 +84,57 @@ fn solve(input: impl Iterator<Item = String>, start: Instant) {
             for i in 1..knots.len() {
                 let prev = knots[i - 1].clone();
                 let current = &mut knots[i];
+                let mut dx = current.0 - prev.0;
+                let mut dy = current.1 - prev.1;
 
-                if i32::abs(prev.0 - current.0) > 1 && i32::abs(prev.1 - current.1) > 0 {
-                    current.0 += (prev.0 - current.0) / i32::abs(prev.0 - current.0);
-                    current.1 += (prev.1 - current.1) / i32::abs(prev.1 - current.1);
-                } else if i32::abs(prev.1 - current.1) > 1 && i32::abs(prev.0 - current.0) > 0 {
-                    current.0 += (prev.0 - current.0) / i32::abs(prev.0 - current.0);
-                    current.1 += (prev.1 - current.1) / i32::abs(prev.1 - current.1);
-                } else if i32::abs(prev.0 - current.0) > 1 {
+                while i32::abs(dx) > 1 || i32::abs(dy) > 1 {
+                    let direction = match (dx, dy) {
+                        (dx, 0) if dx < 0 => (1, 0),
+                        (dx, 0) if dx > 0 => (-1, 0),
+                        (0, dy) if dy < 0 => (0, 1),
+                        (0, dy) if dy > 0 => (0, -1),
+                        (dx, dy) if dx < 0 && dy < 0 => (1, 1),
+                        (dx, dy) if dx > 0 && dy < 0 => (-1, 1),
+                        (dx, dy) if dx < 0 && dy > 0 => (1, -1),
+                        (dx, dy) if dx > 0 && dy > 0 => (-1, -1),
+                        _ => unreachable!(),
+                    };
                     current.0 += direction.0;
-                } else if i32::abs(prev.1 - current.1) > 1 {
                     current.1 += direction.1;
+                    dx = current.0 - prev.0;
+                    dy = current.1 - prev.1;
                 }
+                visited.insert(knots.last().unwrap().clone());
+                for y in (-15..15).rev() {
+                    for x in -15..15 {
+                        if knots.contains(&(x, y)) {
+                            print!("{}", knots.iter().position(|p| *p == (x, y)).unwrap())
+                        } else {
+                            match visited.contains(&(x, y)) {
+                                true => print!("#"),
+                                false => print!(".")
+                            }
+                        }
+                    }
+                    println!()
+                }
+                println!("{}, current knot: {}\n", command, i);
+                sleep(Duration::from_millis(10));
             }
-            visited.insert(knots.last().unwrap().clone());
         }
-        for y in (-15..15).rev() {
-            for x in -15..15 {
-                if knots.contains(&(x, y)) {
-                    print!("{}", knots.iter().position(|p| *p == (x, y)).unwrap())
-                }
-                else {
-                    print!(".")
-                }
-            }
-            println!()
-        }
-        println!("{}\n", command);
-
     }
 
     for y in (-15..15).rev() {
         for x in -15..15 {
             if visited.contains(&(x, y)) {
                 print!("#");
-            }
-            else {
+            } else {
                 print!(".");
             }
         }
         println!()
     }
 
-    println!("{:?}", visited.iter().sorted().collect::<Vec<_>>());
+    // println!("{:?}", visited.iter().sorted().collect::<Vec<_>>());
     println!("{}", visited.len());
 }
