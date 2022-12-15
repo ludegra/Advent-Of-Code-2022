@@ -1,7 +1,4 @@
-use std::{
-    collections::{HashMap, HashSet},
-    time::Instant,
-};
+use std::{collections::HashSet, time::{Instant, Duration}, thread};
 const DAY_NUMBER: u32 = 14;
 
 fn main() {
@@ -11,77 +8,121 @@ fn main() {
 }
 
 fn solve(input: impl Iterator<Item = String>, start: Instant) {
-    let mut sensors = HashMap::new();
-    let mut beacons = HashSet::new();
-    let mut min_x = i32::MAX;
-    let mut max_x = i32::MIN;
-    let mut min_y = i32::MAX;
-    let mut max_y = i32::MIN;
+    let mut grid: HashSet<(usize, usize)> = HashSet::new();
 
-    for line in input {
-        let mut split = line.split(": ");
-        let mut sensor_coords = split.next().unwrap()[10..]
-            .split(", ")
-            .map(|s| s[2..].parse::<i32>().unwrap());
-        let sensor_x = sensor_coords.next().unwrap();
-        let sensor_y = sensor_coords.next().unwrap();
+    let mut min_x = usize::MAX;
+    let mut max_x = usize::MIN;
+    let mut min_y = usize::MAX;
+    let mut max_y = usize::MIN;
 
-        let mut beacon_coords = split.next().unwrap()[21..]
-            .split(", ")
-            .map(|s| s[2..].parse::<i32>().unwrap());
-        let beacon_x = beacon_coords.next().unwrap();
-        let beacon_y = beacon_coords.next().unwrap();
+    for path in input {
+        let mut vertices = path.split(" -> ").map(|s| {
+            let mut coords = s.split(',');
+            (
+                coords.next().unwrap().parse::<usize>().unwrap(),
+                coords.next().unwrap().parse::<usize>().unwrap(),
+            )
+        });
 
-        beacons.insert((beacon_x, beacon_y));
+        let mut prev = vertices.next().unwrap();
 
-        let radius = sensor_x.abs_diff(beacon_x) + sensor_y.abs_diff(beacon_y);
+        min_x = min_x.min(prev.0);
+        min_y = min_y.min(prev.1);
+        max_x = max_x.max(prev.0);
+        max_y = max_y.max(prev.1);
 
-        min_x = min_x.min(sensor_x - radius as i32);
-        max_x = max_x.max(sensor_x + radius as i32);
-        min_y = min_y.min(sensor_y - radius as i32);
-        max_y = max_y.max(sensor_y + radius as i32);
+        for vertex in vertices {
+            min_x = min_x.min(vertex.0);
+            min_y = min_y.min(vertex.1);
+            max_x = max_x.max(vertex.0);
+            max_y = max_y.max(vertex.1);
 
-        sensors.insert((sensor_x, sensor_y), radius);
-    }
-
-    let mut blocked_locations = 0;
-    println!("{} -> {}", min_x, max_x);
-
-    let y = 2000000;
-    'outer: for x in min_x..=max_x {
-        for ((sensor_x, sensor_y), radius) in sensors.iter() {
-            if sensor_x.abs_diff(x) + sensor_y.abs_diff(y) <= *radius && !beacons.contains(&(x, y)) {
-                blocked_locations += 1;
-                continue 'outer;
-            }
-        }
-    }
-
-    println!("{}", blocked_locations);
-
-    let search_area = 4000000;
-    let mut out = (0, 0);
-    'y_loop: for y in 0..=search_area {
-        let mut x = -1;
-
-        'x_loop: while x <= search_area {
-            x += 1;
-
-            for ((sensor_x, sensor_y), radius) in sensors.iter() {
-                if sensor_x.abs_diff(x) + sensor_y.abs_diff(y) <= *radius {
-                    let y_diff = sensor_y.abs_diff(y);
-                    let x_diff = x - sensor_x;
-
-                    x += *radius as i32 - (y_diff as i32 + x_diff);
-                    continue 'x_loop;
+            match (vertex.0.abs_diff(prev.0), vertex.1.abs_diff(prev.1)) {
+                (_, 0) => {
+                    for x in prev.0.min(vertex.0)..=prev.0.max(vertex.0) {
+                        grid.insert((x, vertex.1));
+                    }
                 }
-            }
-            println!("out: ({}, {})", x, y);
-            out = (x, y);
-            break 'y_loop;
+                (0, _) => {
+                    for y in prev.1.min(vertex.1)..=prev.1.max(vertex.1) {
+                        grid.insert((vertex.0, y));
+                    }
+                }
+                _ => unreachable!()
+            };
+
+            prev = vertex;
         }
     }
 
-    println!("{}", out.0 * 4000000 + out.1);
+    let mut sand_locations = HashSet::new();
 
+    'outer: loop {
+        let mut sand_pos = (500, 0);
+
+        while let Some(new_position) = new_position(sand_pos, &grid) {
+            if new_position.1 > max_y {
+                break 'outer
+            }
+            sand_pos = new_position;
+        }
+        
+        sand_locations.insert(sand_pos);
+        grid.insert(sand_pos);
+    }
+    println!("{}", sand_locations.len());
+
+    for x in 0..1000 {
+        grid.insert((x, max_y + 2));
+    }
+
+    max_y += 2;
+
+    while !sand_locations.contains(&(500, 0)) {
+        let mut sand_pos = (500, 0);
+
+        while let Some(new_position) = new_position(sand_pos, &grid) {
+            sand_pos = new_position;
+
+            min_x = min_x.min(new_position.0);
+            max_x = max_x.max(new_position.0);
+        }
+        
+        sand_locations.insert(sand_pos);
+        grid.insert(sand_pos);
+    }
+
+    let mut string = String::from("\x1B[2J\x1B[1;1H");
+    for y in 0..=max_y {
+    string.push_str(&format!("{:03} ", y));
+            for x in (min_x - 1)..=(max_x + 1) {
+            string.push_str(&format!("{}", 
+            if sand_locations.contains(&(x, y)) {
+                'o'
+            }
+            else if grid.contains(&(x, y)) {
+                '#'
+            } else {
+                '.'
+            }))
+        }
+        string.push('\n')
+    }
+    println!("{}", string);
+    println!("{}", sand_locations.len())
+}
+
+fn new_position(sand_pos: (usize, usize), grid: &HashSet<(usize, usize)>) -> Option<(usize, usize)> {
+    if !grid.contains(&(sand_pos.0, sand_pos.1 + 1)) {
+        Some((sand_pos.0, sand_pos.1 + 1))
+    }
+    else if !grid.contains(&(sand_pos.0 - 1, sand_pos.1 + 1)) {
+        Some((sand_pos.0 - 1, sand_pos.1 + 1))
+    }
+    else if !grid.contains(&(sand_pos.0 + 1, sand_pos.1 + 1)) {
+        Some((sand_pos.0 + 1, sand_pos.1 + 1))
+    }
+    else {
+        None
+    }
 }

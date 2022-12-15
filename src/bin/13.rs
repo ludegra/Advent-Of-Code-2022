@@ -1,4 +1,4 @@
-use std::time::Instant;
+use std::{cmp::Ordering, time::Instant};
 
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
@@ -38,16 +38,33 @@ fn solve(input: impl Iterator<Item = String>, start: Instant) {
         out += result as usize * (i + 1);
     }
 
-    println!("{}", out)
+    println!("{}", out);
 
+    let separator1 = String::from("[[2]]");
+    let separator2 = String::from("[[6]]");
+    input.extend(vec![separator1.clone(), separator2.clone()]);
     input.sort_by(|lhs, rhs| {
         let lhs: Package = serde_json::from_str(&lhs).unwrap();
         let rhs: Package = serde_json::from_str(&rhs).unwrap();
 
         let result = is_sorted(lhs, rhs);
 
+<<<<<<< HEAD
         match result {}
     })
+=======
+        match result {
+            Some(true) => Ordering::Less,
+            Some(false) => Ordering::Greater,
+            None => Ordering::Equal,
+        }
+    });
+
+    let index1 = input.iter().find_position(|s| **s == separator1).unwrap().0 + 1;
+    let index2 = input.iter().find_position(|s| **s == separator2).unwrap().0 + 1;
+
+    println!("{}", index1 * index2)
+>>>>>>> 9c7e009460fa32e83044b73a4658d1b2752ff814
 }
 
 fn is_sorted(lhs: Package, rhs: Package) -> Option<bool> {
