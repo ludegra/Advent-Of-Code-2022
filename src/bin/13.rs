@@ -45,6 +45,8 @@ fn solve(input: impl Iterator<Item = String>, start: Instant) {
         let rhs: Package = serde_json::from_str(&rhs).unwrap();
 
         let result = is_sorted(lhs, rhs);
+
+        match result {}
     })
 }
 
