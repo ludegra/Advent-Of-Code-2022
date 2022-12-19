@@ -105,21 +105,21 @@ fn solve(input: impl Iterator<Item = String>, start: Instant) {
                     dy = current.1 - prev.1;
                 }
                 visited.insert(knots.last().unwrap().clone());
-                for y in (-15..15).rev() {
-                    for x in -15..15 {
-                        if knots.contains(&(x, y)) {
-                            print!("{}", knots.iter().position(|p| *p == (x, y)).unwrap())
-                        } else {
-                            match visited.contains(&(x, y)) {
-                                true => print!("#"),
-                                false => print!(".")
-                            }
-                        }
-                    }
-                    println!()
-                }
-                println!("{}, current knot: {}\n", command, i);
-                sleep(Duration::from_millis(10));
+                // for y in (-15..15).rev() {
+                //     for x in -15..15 {
+                //         if knots.contains(&(x, y)) {
+                //             print!("{}", knots.iter().position(|p| *p == (x, y)).unwrap())
+                //         } else {
+                //             match visited.contains(&(x, y)) {
+                //                 true => print!("#"),
+                //                 false => print!(".")
+                //             }
+                //         }
+                //     }
+                //     println!()
+                // }
+                // println!("{}, current knot: {}\n", command, i);
+                // sleep(Duration::from_millis(10));
             }
         }
     }

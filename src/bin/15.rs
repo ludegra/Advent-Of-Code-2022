@@ -48,17 +48,25 @@ fn solve(input: impl Iterator<Item = String>, start: Instant) {
     let mut blocked_locations = 0;
     println!("{} -> {}", min_x, max_x);
 
+    // Funkar inte längre
     let y = 2000000;
-    'outer: for x in min_x..=max_x {
+    let mut x = min_x - 1;
+    'outer: while x <= max_x {
+        x += 1;
         for ((sensor_x, sensor_y), radius) in sensors.iter() {
             if sensor_x.abs_diff(x) + sensor_y.abs_diff(y) <= *radius && !beacons.contains(&(x, y)) {
-                blocked_locations += 1;
+                let y_diff = sensor_y.abs_diff(y);
+                let x_diff = x - sensor_x;
+                x += *radius as i32 - (y_diff as i32 + x_diff);
+                blocked_locations += *radius as i32 - (y_diff as i32 + x_diff);
                 continue 'outer;
             }
         }
     }
 
-    println!("{}", blocked_locations);
+    println!("Part 1: {} ({}ms)", blocked_locations, start.elapsed().as_millis());
+    println!("(Part 1 är trasig)");
+    let start = Instant::now();
 
     let search_area = 4000000;
     let mut out = (0, 0);
@@ -83,5 +91,6 @@ fn solve(input: impl Iterator<Item = String>, start: Instant) {
         }
     }
 
-    println!("{}", out.0 * 4000000 + out.1);
+    let out = out.0 as u64 * 4000000 + out.1 as u64;
+    println!("Part 2: {} ({}s)", out, start.elapsed().as_secs());
 }

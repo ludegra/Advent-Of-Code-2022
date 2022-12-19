@@ -48,53 +48,101 @@ fn solve(_input: impl Iterator<Item = String>, start: Instant) {
         //     test: Box::new(|test_result| if test_result { 0 } else { 1 }),
         //     test_value: 17,
         // },
+        // Monkey {
+        //     items: vec![74, 64, 74, 63, 53],
+        //     operation: Operation::Multiplied(7),
+        //     test: Box::new(|test_result| if test_result { 1 } else { 6 }),
+        //     test_value: 5,
+        // },
+        // Monkey {
+        //     items: vec![69, 99, 95, 62],
+        //     operation: Operation::Squared,
+        //     test: Box::new(|test_result| if test_result { 2 } else { 5 }),
+        //     test_value: 17,
+        // },
+        // Monkey {
+        //     items: vec![59, 81],
+        //     operation: Operation::Added(8),
+        //     test: Box::new(|test_result| if test_result { 4 } else { 3 }),
+        //     test_value: 7,
+        // },
+        // Monkey {
+        //     items: vec![50, 67, 63, 57, 63, 83, 97],
+        //     operation: Operation::Added(4),
+        //     test: Box::new(|test_result| if test_result { 0 } else { 7 }),
+        //     test_value: 13,
+        // },
+        // Monkey {
+        //     items: vec![61, 94, 85, 52, 81, 90, 94, 70],
+        //     operation: Operation::Added(3),
+        //     test: Box::new(|test_result| if test_result { 7 } else { 3 }),
+        //     test_value: 19,
+        // },
+        // Monkey {
+        //     items: vec![69],
+        //     operation: Operation::Added(5),
+        //     test: Box::new(|test_result| if test_result { 4 } else { 2 }),
+        //     test_value: 3,
+        // },
+        // Monkey {
+        //     items: vec![54, 55, 58],
+        //     operation: Operation::Added(7),
+        //     test: Box::new(|test_result| if test_result { 1 } else { 5 }),
+        //     test_value: 11,
+        // },
+        // Monkey {
+        //     items: vec![79, 51, 83, 88, 93, 76],
+        //     operation: Operation::Multiplied(3),
+        //     test: Box::new(|test_result| if test_result { 0 } else { 6 }),
+        //     test_value: 2,
+        // },
         Monkey {
-            items: vec![74, 64, 74, 63, 53],
-            operation: Operation::Multiplied(7),
+            items: vec![76, 88, 96, 97, 58, 61, 67],
+            operation: Operation::Multiplied(19),
+            test: Box::new(|test_result| if test_result { 2 } else { 3 }),
+            test_value: 3,
+        },
+        Monkey {
+            items: vec![93, 71, 79, 83, 69, 70, 94, 98],
+            operation: Operation::Added(8),
+            test: Box::new(|test_result| if test_result { 5 } else { 6 }),
+            test_value: 11,
+        },
+        Monkey {
+            items: vec![50, 74, 67, 92, 61, 76],
+            operation: Operation::Multiplied(13),
+            test: Box::new(|test_result| if test_result { 3 } else { 1 }),
+            test_value: 19,
+        },
+        Monkey {
+            items: vec![76, 92],
+            operation: Operation::Added(6),
             test: Box::new(|test_result| if test_result { 1 } else { 6 }),
             test_value: 5,
         },
         Monkey {
-            items: vec![69, 99, 95, 62],
-            operation: Operation::Squared,
-            test: Box::new(|test_result| if test_result { 2 } else { 5 }),
-            test_value: 17,
+            items: vec![74, 94, 55, 87, 62],
+            operation: Operation::Added(5),
+            test: Box::new(|test_result| if test_result { 2 } else { 0 }),
+            test_value: 2,
         },
         Monkey {
-            items: vec![59, 81],
-            operation: Operation::Added(8),
-            test: Box::new(|test_result| if test_result { 4 } else { 3 }),
+            items: vec![59, 62, 53, 62],
+            operation: Operation::Squared,
+            test: Box::new(|test_result| if test_result { 4 } else { 7 }),
             test_value: 7,
         },
         Monkey {
-            items: vec![50, 67, 63, 57, 63, 83, 97],
-            operation: Operation::Added(4),
-            test: Box::new(|test_result| if test_result { 0 } else { 7 }),
-            test_value: 13,
+            items: vec![62],
+            operation: Operation::Added(2),
+            test: Box::new(|test_result| if test_result { 5 } else { 7 }),
+            test_value: 17,
         },
         Monkey {
-            items: vec![61, 94, 85, 52, 81, 90, 94, 70],
+            items: vec![85, 54, 53],
             operation: Operation::Added(3),
-            test: Box::new(|test_result| if test_result { 7 } else { 3 }),
-            test_value: 19,
-        },
-        Monkey {
-            items: vec![69],
-            operation: Operation::Added(5),
-            test: Box::new(|test_result| if test_result { 4 } else { 2 }),
-            test_value: 3,
-        },
-        Monkey {
-            items: vec![54, 55, 58],
-            operation: Operation::Added(7),
-            test: Box::new(|test_result| if test_result { 1 } else { 5 }),
-            test_value: 11,
-        },
-        Monkey {
-            items: vec![79, 51, 83, 88, 93, 76],
-            operation: Operation::Multiplied(3),
-            test: Box::new(|test_result| if test_result { 0 } else { 6 }),
-            test_value: 2,
+            test: Box::new(|test_result| if test_result { 4 } else { 0 }),
+            test_value: 13,
         },
     ]
     .into_iter()
@@ -146,77 +194,126 @@ fn solve(_input: impl Iterator<Item = String>, start: Instant) {
 
 fn part1() {
     let mut monkies = vec![
+        // Monkey {
+        //     items: vec![79, 98],
+        //     operation: Operation::Multiplied(19),
+        //     test: Box::new(|test_result| if test_result { 2 } else { 3 }),
+        //     test_value: 23,
+        // },
+        // Monkey {
+        //     items: vec![54, 65, 75, 74],
+        //     operation: Operation::Added(6),
+        //     test: Box::new(|test_result| if test_result { 2 } else { 0 }),
+        //     test_value: 19,
+        // },
+        // Monkey {
+        //     items: vec![79, 60, 97],
+        //     operation: Operation::Squared,
+        //     test: Box::new(|test_result| if test_result { 1 } else { 3 }),
+        //     test_value: 13,
+        // },
+        // Monkey {
+        //     items: vec![74],
+        //     operation: Operation::Added(3),
+        //     test: Box::new(|test_result| if test_result { 0 } else { 1 }),
+        //     test_value: 17,
+        // },
+        // Monkey {
+        //     items: vec![74, 64, 74, 63, 53],
+        //     operation: Operation::Multiplied(7),
+        //     test: Box::new(|test_result| if test_result { 1 } else { 6 }),
+        //     test_value : 5,
+        // },
+        // Monkey {
+        //     items: vec![69, 99, 95, 62],
+        //     operation: Operation::Squared,
+        //     test: Box::new(|test_result| if test_result { 2 } else { 5 }),
+        //     test_value: 17
+        // },
+        // Monkey {
+        //     items: vec![59, 81],
+        //     operation: Operation::Added(8),
+        //     test: Box::new(|test_result| if test_result { 4 } else { 3 }),
+        //     test_value: 7
+        // },
+        // Monkey {
+        //     items: vec![50, 67, 63, 57, 63, 83, 97],
+        //     operation: Operation::Added(4),
+        //     test: Box::new(|test_result| if test_result { 0 } else { 7 }),
+        //     test_value: 13
+        // },
+        // Monkey {
+        //     items: vec![61, 94, 85, 52, 81, 90, 94, 70],
+        //     operation: Operation::Added(3),
+        //     test: Box::new(|test_result| if test_result { 7 } else { 3 }),
+        //     test_value: 19
+        // },
+        // Monkey {
+        //     items: vec![69],
+        //     operation: Operation::Added(5),
+        //     test: Box::new(|test_result| if test_result { 4 } else { 2 }),
+        //     test_value: 3
+        // },
+        // Monkey {
+        //     items: vec![54, 55, 58],
+        //     operation: Operation::Added(7),
+        //     test: Box::new(|test_result| if test_result { 1 } else { 5 }),
+        //     test_value: 11
+        // },
+        // Monkey {
+        //     items: vec![79, 51, 83, 88, 93, 76],
+        //     operation: Operation::Multiplied(3),
+        //     test: Box::new(|test_result| if test_result { 0 } else { 6 }),
+        //     test_value: 2
+        // },
         Monkey {
-            items: vec![79, 98],
+            items: vec![76, 88, 96, 97, 58, 61, 67],
             operation: Operation::Multiplied(19),
             test: Box::new(|test_result| if test_result { 2 } else { 3 }),
-            test_value: 23,
+            test_value: 3,
         },
         Monkey {
-            items: vec![54, 65, 75, 74],
-            operation: Operation::Added(6),
-            test: Box::new(|test_result| if test_result { 2 } else { 0 }),
+            items: vec![93, 71, 79, 83, 69, 70, 94, 98],
+            operation: Operation::Added(8),
+            test: Box::new(|test_result| if test_result { 5 } else { 6 }),
+            test_value: 11,
+        },
+        Monkey {
+            items: vec![50, 74, 67, 92, 61, 76],
+            operation: Operation::Multiplied(13),
+            test: Box::new(|test_result| if test_result { 3 } else { 1 }),
             test_value: 19,
         },
         Monkey {
-            items: vec![79, 60, 97],
-            operation: Operation::Squared,
-            test: Box::new(|test_result| if test_result { 1 } else { 3 }),
-            test_value: 13,
+            items: vec![76, 92],
+            operation: Operation::Added(6),
+            test: Box::new(|test_result| if test_result { 1 } else { 6 }),
+            test_value: 5,
         },
         Monkey {
-            items: vec![74],
-            operation: Operation::Added(3),
-            test: Box::new(|test_result| if test_result { 0 } else { 1 }),
+            items: vec![74, 94, 55, 87, 62],
+            operation: Operation::Added(5),
+            test: Box::new(|test_result| if test_result { 2 } else { 0 }),
+            test_value: 2,
+        },
+        Monkey {
+            items: vec![59, 62, 53, 62],
+            operation: Operation::Squared,
+            test: Box::new(|test_result| if test_result { 4 } else { 7 }),
+            test_value: 7,
+        },
+        Monkey {
+            items: vec![62],
+            operation: Operation::Added(2),
+            test: Box::new(|test_result| if test_result { 5 } else { 7 }),
             test_value: 17,
-        }, // Monkey {
-           //     items: vec![74, 64, 74, 63, 53],
-           //     operation: Operation::Multiplied(7),
-           //     test: Box::new(|test_result| if test_result { 1 } else { 6 }),
-           //     test_value : 5,
-           // },
-           // Monkey {
-           //     items: vec![69, 99, 95, 62],
-           //     operation: Operation::Squared,
-           //     test: Box::new(|test_result| if test_result { 2 } else { 5 }),
-           //     test_value: 17
-           // },
-           // Monkey {
-           //     items: vec![59, 81],
-           //     operation: Operation::Added(8),
-           //     test: Box::new(|test_result| if test_result { 4 } else { 3 }),
-           //     test_value: 7
-           // },
-           // Monkey {
-           //     items: vec![50, 67, 63, 57, 63, 83, 97],
-           //     operation: Operation::Added(4),
-           //     test: Box::new(|test_result| if test_result { 0 } else { 7 }),
-           //     test_value: 13
-           // },
-           // Monkey {
-           //     items: vec![61, 94, 85, 52, 81, 90, 94, 70],
-           //     operation: Operation::Added(3),
-           //     test: Box::new(|test_result| if test_result { 7 } else { 3 }),
-           //     test_value: 19
-           // },
-           // Monkey {
-           //     items: vec![69],
-           //     operation: Operation::Added(5),
-           //     test: Box::new(|test_result| if test_result { 4 } else { 2 }),
-           //     test_value: 3
-           // },
-           // Monkey {
-           //     items: vec![54, 55, 58],
-           //     operation: Operation::Added(7),
-           //     test: Box::new(|test_result| if test_result { 1 } else { 5 }),
-           //     test_value: 11
-           // },
-           // Monkey {
-           //     items: vec![79, 51, 83, 88, 93, 76],
-           //     operation: Operation::Multiplied(3),
-           //     test: Box::new(|test_result| if test_result { 0 } else { 6 }),
-           //     test_value: 2
-           // },
+        },
+        Monkey {
+            items: vec![85, 54, 53],
+            operation: Operation::Added(3),
+            test: Box::new(|test_result| if test_result { 4 } else { 0 }),
+            test_value: 13,
+        },
     ]
     .into_iter()
     .enumerate()

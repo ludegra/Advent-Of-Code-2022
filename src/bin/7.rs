@@ -95,11 +95,11 @@ fn solve(mut input: impl Iterator<Item = String>, start: Instant) {
 
     let unused = 70000000 - get_size(&root);
     let needed = 30000000 - unused;
-    println!("{}", needed);
+    // println!("{}", needed);
     let mut options = find_dirs_bigger_than(&root, needed);
     options.sort_by(|a, b| get_size(a).cmp(&get_size(b)));
 
-    println!("{:?}", options);
+    // println!("{:?}", options);
     println!("{}", get_size(&options.first().unwrap()))
 }
 

@@ -49,10 +49,6 @@ fn solve(input: impl Iterator<Item = String>, start: Instant) {
 
         let result = is_sorted(lhs, rhs);
 
-<<<<<<< HEAD
-        match result {}
-    })
-=======
         match result {
             Some(true) => Ordering::Less,
             Some(false) => Ordering::Greater,
@@ -64,7 +60,6 @@ fn solve(input: impl Iterator<Item = String>, start: Instant) {
     let index2 = input.iter().find_position(|s| **s == separator2).unwrap().0 + 1;
 
     println!("{}", index1 * index2)
->>>>>>> 9c7e009460fa32e83044b73a4658d1b2752ff814
 }
 
 fn is_sorted(lhs: Package, rhs: Package) -> Option<bool> {
