@@ -1,7 +1,8 @@
 use std::{
     collections::{HashMap, HashSet},
-    time::Instant, fs::File,
-    io::Write
+    fs::File,
+    io::Write,
+    time::Instant,
 };
 
 use itertools::Itertools;
@@ -52,22 +53,16 @@ fn solve(input: impl Iterator<Item = String>, start: Instant) {
         distance_map.retain(|valve, _| valves[valve].rate != 0);
         distances.insert(valve.clone(), distance_map);
     }
-    println!();
-    
+    // println!();
+
     let mut f = File::create("./test").unwrap();
+    let paths = generate_path("AA", 26, HashSet::new(), &distances);
+    writeln!(f, "{:#?}", paths).unwrap();
 
-    let (mitigated, path) = test_path(
-        "AA",
-        HashSet::new(),
-        30,
-        &distances,
-        &valves,
-        0,
-        &mut f
-    );
+    // let (mitigated, path) = test_path("AA", HashSet::new(), 30, &distances, &valves, 0, &mut f);
 
-    println!("{:?}", path);
-    println!("{}", mitigated);
+    // println!("{:?}", path);
+    // println!("{}", mitigated);
 }
 
 fn djikstra(graph: &HashMap<String, Valve>, start: &str) -> HashMap<String, u32> {
@@ -108,7 +103,7 @@ fn test_path(
     distances: &HashMap<String, HashMap<String, u32>>,
     valves: &HashMap<String, Valve>,
     indent: u32,
-    f: &mut File
+    f: &mut File,
 ) -> (u32, Vec<String>) {
     // let indent_string = (0..indent).fold(String::new(), |acc, _| acc + " ");
     // writeln!(f, "{}{}: {}", indent_string, valve, 31 - time).unwrap();
@@ -136,7 +131,7 @@ fn test_path(
             distances,
             valves,
             indent + 1,
-            f
+            f,
         );
 
         let netto_preasure = to_be_mitigated + rate * dt;
@@ -153,4 +148,41 @@ fn test_path(
 
     // writeln!(f, "{}path: {:?}", indent_string, out_path).unwrap();
     (out, out_path)
+}
+
+fn generate_path(
+    valve: &str,
+    time: u32,
+    mut active: HashSet<String>,
+    distances: &HashMap<String, HashMap<String, u32>>,
+) -> HashSet<Vec<String>> {
+    active.insert(valve.to_string());
+    let path = vec![valve.to_string()];
+    let local_distances = &distances[valve];
+
+    let mut paths = HashSet::new(); 
+    for (other, distance) in local_distances {
+        if active.contains(other) {
+            continue;
+        }
+
+        let dt = distance + 1;
+
+        if dt > time {
+            continue;
+        }
+
+        for sub_path in  generate_path(
+            other,
+            time - dt,
+            active.clone(),
+            distances
+        ) {
+            let mut full_path = path.clone();
+            full_path.extend(sub_path); 
+            paths.insert(full_path);
+        }
+    }
+
+    paths
 }
